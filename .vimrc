@@ -10,11 +10,17 @@ set smarttab
 set ruler
 set smartindent
 
-autocmd BufRead,BufNewFile *.cpp,*.cc,*.h,*.c,*.hpp,Makefile set shiftwidth=4 tabstop=4 noexpandtab
-autocmd FileType cpp,c,h source ~/.vim/syntax/vulkan1.0.vim
+execute pathogen#infect()
+
+augroup vimrc
+  autocmd! vimrc
+  autocmd BufRead,BufNewFile *.cpp,*.cc,*.h,*.c,*.hpp,Makefile setlocal shiftwidth=4 tabstop=4 noexpandtab
+  autocmd BufRead,BufNewFile * call vim_init#Init()
+  autocmd FileType c,cpp,h,hpp source ~/.vim/syntax/vulkan1.0.vim
+augroup END
+
 let mapleader = " "
 
-execute pathogen#infect()
 "map <C-n> :NERDTreeToggle<CR>
 map <C-n> <plug>NERDTreeTabsToggle<CR>
 map <silent> <leader>c :!clear<CR>
