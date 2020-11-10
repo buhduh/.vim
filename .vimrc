@@ -44,3 +44,10 @@ vnoremap <silent> <leader>j :<c-u>call clean_json#CleanJSON()<CR>
 "set foldlevel=99
 
 "let g:go_version_warning = 0
+
+"NOTE, It is possible to run python directly:
+"function! AFunc() "functions names must be capitalized
+"python3 <<EOF
+"print("In a function")
+"EOF
+"endfunction
