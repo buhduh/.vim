@@ -16,12 +16,8 @@ from vimwrapper import *
 def main():
   #vim.command("let g:bar = 'yolo'")
   #vim.command("echo g:bar")
-  v = VimWrapper()
-  v.g_foobar = "yolo"
-  print(v.g_foobar)
-  v.g_foobar = "yolo2"
-  print(v.g_foobar)
-  #extensions.doExtensions(vim.current.buffer.name)
+  wrapper = VimWrapper()
+  extensions.doExtensions(vim.current.buffer.name, wrapper)
 
 if __name__ == "__main__":
   main()
