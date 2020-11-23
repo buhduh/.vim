@@ -1,36 +1,45 @@
 import vim
 import re
+import collections
 
 class VimWrapper:
 
   class _VimSingleton:
 
-    vimPattern = re.compile(r"^([a-z])_(\w+)$")
+    VIM_PATTERN = re.compile(r"^([a-z])_(\w+)$")
+    Buffer = collections.namedtuple("Buffer", ["name", "buffer"])
     def __init__(self):
-      pass
+      self.ref = VimWrapper._VimSingleton
 
     def __getattr__(self, name):
-      match = VimWrapper._VimSingleton.vimPattern.search(name) 
+      match = VimWrapper._VimSingleton.VIM_PATTERN.search(name) 
       if match:
         return vim.eval("%s:%s" % (match.group(1), match.group(2)))
       else:
         return super().__getattr__(name)
 
     def __setattr__(self, name, value):
-      match = VimWrapper._VimSingleton.vimPattern.search(name) 
+      match = VimWrapper._VimSingleton.VIM_PATTERN.search(name) 
       if match:
         vim.command("let %s:%s = '%s'" % (match.group(1), match.group(2), value))
       else:
         super().__setattr__(name, value)
 
+    def source(self, fileName):
+      vim.command("source %s" %(fileName)) 
+
+    #returns a named tuple, (name, buffer)
+    #consider generators here for really long files
     def getBuffer(self):
-      print("here?")
-      return vim.current.buffer
-  
+      end = vim.eval("line('$')")
+      name = vim.current.buffer.name
+      lines = vim.current.buffer.range(1, int(end))
+      return self.ref.Buffer(name, lines)
+      
   _instance = None
   def __init__(self):
-    if not _instance:
-      _instance = VimWrapper._VimSingleton()
+    if not VimWrapper._instance:
+      VimWrapper._instance = VimWrapper._VimSingleton()
     
   def __setattr__(self, name, value):
     VimWrapper._instance.__setattr__(name, value)
@@ -39,6 +48,7 @@ class VimWrapper:
     return VimWrapper._instance.__getattr__(name)
 
   def getBuffer(self):
-    print("Here?")
-    #TODO For w/e reason this isn't calling into the instance
     return VimWrapper._instance.getBuffer()
+
+  def source(self, fileName):
+    VimWrapper._instance.source(fileName)
